@@ -1,0 +1,87 @@
+[
+  {
+    "id": "table.OtpCode",
+    "label": "Create table \"OtpCode\"",
+    "summary": "Creates table \"OtpCode\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "OtpCode"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"OtpCode\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"OtpCode\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"OtpCode\"",
+        "sql": "CREATE TABLE \"public\".\"OtpCode\" (\n  \"code\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"phone\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"OtpCode\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"OtpCode\"",
+          "r",
+          "p"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.OtpCode.OtpCode_phone_idx_8db23f45",
+    "label": "Create index \"OtpCode_phone_idx_8db23f45\" on \"OtpCode\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "OtpCode_phone_idx_8db23f45",
+        "table": "OtpCode"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"OtpCode_phone_idx_8db23f45\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"OtpCode_phone_idx_8db23f45\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"OtpCode_phone_idx_8db23f45\"",
+        "sql": "CREATE INDEX \"OtpCode_phone_idx_8db23f45\" ON \"public\".\"OtpCode\" (\"phone\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"OtpCode_phone_idx_8db23f45\" exists on \"OtpCode\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"OtpCode_phone_idx_8db23f45\"",
+          "i",
+          "I",
+          "\"public\".\"OtpCode\"",
+          "btree",
+          "[\"phone\"]"
+        ]
+      }
+    ]
+  }
+]
